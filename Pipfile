@@ -8,6 +8,11 @@ verify_ssl = true
 [packages]
 django = "*"
 psycopg2 = "*"
+psycopg2-binary = "*"
+beautifulsoup4 = "*"
+selenium = "*"
+requests-html = "*"
+asyncio = "*"
 
 [requires]
 python_version = "3.6"

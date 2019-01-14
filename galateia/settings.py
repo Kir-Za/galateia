@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # user's apps
+    'sites',
 ]
 
 MIDDLEWARE = [
@@ -76,9 +79,9 @@ WSGI_APPLICATION = 'galateia.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'myproject',
-        'USER': 'myprojectuser',
-        'PASSWORD': 'password',
+        'NAME': 'galateia',
+        'USER': 'galateia',
+        'PASSWORD': 'Qwerty123',
         'HOST': 'localhost',
         'PORT': '',
     }
