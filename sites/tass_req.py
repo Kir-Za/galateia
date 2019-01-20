@@ -62,3 +62,23 @@ def get_content(abs_url):
             text_content += raw.text
         return abstract, text_content
     return None
+
+
+def tass_circle(target_site):
+    """
+    Основной цикл получения списка последних неовостей и их содержания с tass.ru
+    :param target_site: в данном случае tass.ru
+    :return: кортеж последних новостей
+    """
+    news_raw = []
+    site_topics = get_news_tuple(target_site)
+    for topic in site_topics:
+        abstract, main_text = get_content(topic[1])
+        news_raw.append({
+            'target': target_site,
+            'news_title': topic[0],
+            'news_link': topic[1],
+            'abstract': abstract,
+            'main_text': main_text
+        })
+    return tuple(news_raw)

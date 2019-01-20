@@ -1,46 +1,36 @@
-import datetime
+import multiprocessing as mp
+
+from django.conf import settings
+
 from sites.models import Site, TmpContent
-# from django.contrib.auth.models import User
-from requests_html import HTMLSession
-from sites.tass_req import get_news_tuple, get_content
+from sites.tass_req import tass_circle
 
 
-def get_available_sites(user=None):
-    #return Site.objects.all()
-    return ['https://tass.ru/ekonomika', ]
+def get_available_sites():
+    return [site.target_urls for site in Site.objects.filter(is_active=True)]
 
 
-def get_site_content(site_url, need_urls=True):
-    if need_urls:
-        if 'tass' in site_url:
-            return get_news_tuple(site_url)
-    abstract, main_text = get_content(site_url)
-    return main_text
-
-
-def save_results(site, topic, content):
-    if not TmpContent.objects.filter(link=topic[1]).first():
-        TmpContent.objects.create(
-            target_site=site,
-            link=topic[1],
-            title=topic[0],
-            body=content
-        )
-
-
-def main_circle():
-    t1 = datetime.datetime.now()
-    target_site = get_available_sites() #  User.objects.last())
-    for site in target_site:
-        site_topics = get_site_content(site, need_urls=True)
-        for topic in site_topics:
-            content = get_site_content(topic[1], need_urls=False)
-            save_results(site, topic, content)
-    print("{}".format((datetime.datetime.now() - t1)))
+def save_results(results):
+    for part in results:
+        for result in part:
+            if not TmpContent.objects.filter(link=result['news_link']).first():
+                TmpContent.objects.create(
+                    target_site=result['target'],
+                    link=result['news_link'],
+                    title=result['news_title'],
+                    abstract=result['abstract'],
+                    body=result['main_text']
+                )
 
 
 def run_parser():
-    main_circle()
-
-if __name__ == '__main__':
-    run_parser()
+    tass_pool = []
+    process_pool = mp.Pool(processes=settings.PROCESS_AMOUNT)
+    for site in get_available_sites():
+        if 'tass' in site:
+            tass_pool.append(site)
+    results = [process_pool.apply_async(tass_circle, args=(site, )) for site in tass_pool]
+    clean_data = [i.get() for i in results]
+    save_results(clean_data)
+    process_pool.close()
+    process_pool.join()

@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 
 
 class Site(models.Model):
@@ -30,8 +29,9 @@ class TmpContent(models.Model):
     """
     target_site = models.URLField(verbose_name='Корневой сайт')
     link = models.URLField(verbose_name='Адрес')
-    title = models.CharField(max_length=200, verbose_name='Заголовок')
-    body = models.TextField(verbose_name="Тело статьи")
+    title = models.CharField(max_length=200, verbose_name='Заголовок', default='')
+    abstract = models.TextField(verbose_name="Краткое описание", default='')
+    body = models.TextField(verbose_name="Тело статьи", default='')
 
     def __str__(self):
         return "{}".format(self.title)
