@@ -128,3 +128,34 @@ STATIC_URL = '/static/'
 
 # Multiprocessing
 PROCESS_AMOUNT = 2
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'detail': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'detail'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '{}/log/develop.log'.format(BASE_DIR),
+            'formatter': 'detail'
+        },
+    },
+    'loggers': {
+        'tmp_develop': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+}
+

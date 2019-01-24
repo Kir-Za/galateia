@@ -9,6 +9,8 @@ verify_ssl = true
 psycopg2-binary = "*"
 django = "*"
 requests-html = "*"
+mypy = "*"
+setuptools = "*"
 
 [requires]
 python_version = "3.6"
