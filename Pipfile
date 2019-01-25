@@ -11,6 +11,10 @@ django = "*"
 requests-html = "*"
 mypy = "*"
 setuptools = "*"
+celery = {extras = ["redis"],version = "*"}
+django-celery-results = "*"
+django-celery-beat = "*"
+redis = "*"
 
 [requires]
 python_version = "3.6"
