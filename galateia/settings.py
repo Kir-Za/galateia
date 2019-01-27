@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jet.dashboard',
+    'jet',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -114,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -127,6 +129,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Multiprocessing
 PROCESS_AMOUNT = 2
@@ -170,3 +175,22 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_TIMEZONE = TIME_ZONE
 CELERYD_TASK_TIME_LIMIT = 300
+
+JET_SIDE_MENU_COMPACT = True
+JET_CHANGE_FORM_SIBLING_LINKS = True
+
+JET_SIDE_MENU_ITEMS = [
+    {'label': 'Пользователи', 'items': [
+        {'name': 'auth.user'},
+        {'name': 'auth.group'},
+    ]},
+    {'label': 'Сайты', 'items': [
+        {'name': 'sites.site'},
+        {'name': 'sites.tmpcontent'},
+    ]},
+    {'label': 'Периодические задачи', 'items': [
+        {'name': 'django_celery_beat.periodictask', 'label': 'Запланированые задачи'},
+        {'name': 'django_celery_results.taskresult', 'label': 'Результат выполнения'},
+        {'name': 'django_celery_beat.intervalschedule', 'label': 'Временные интервалы'}
+    ]},
+]

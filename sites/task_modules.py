@@ -1,4 +1,4 @@
-import multiprocessing as mp
+from billiard.pool import Pool
 
 from django.conf import settings
 
@@ -53,7 +53,8 @@ class RenderAndSave():
         :param sites_list: список сайтов для анализа
         :return: спискок кортежей с резульатами парсинга
         """
-        self.process_pool = mp.Pool(processes=settings.PROCESS_AMOUNT)
+        #self.process_pool = mp.Pool(processes=settings.PROCESS_AMOUNT)
+        self.process_pool = Pool(processes=settings.PROCESS_AMOUNT)
         results = [self.process_pool.apply_async(self.AVAILABLE_RENDERS[site.news_portal], args=(site.target_urls,))
                    for site in sites_list]
         clean_data = [i.get() for i in results]
@@ -70,7 +71,7 @@ class RenderAndSave():
         site = site[0]
         return [self.AVAILABLE_RENDERS[site.news_portal].__call__(site.target_urls)]
 
-    def run_parser(self):
+    def run_parser(self) -> str:
         """
         Запуск парсера.
         :return:

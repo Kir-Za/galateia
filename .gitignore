@@ -2,3 +2,5 @@
 *.pyc
 .mypy_cache/
 log/
+media
+static
