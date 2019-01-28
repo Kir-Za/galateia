@@ -16,6 +16,8 @@ django-celery-results = "*"
 django-celery-beat = "*"
 redis = "*"
 django-jet = "*"
+djongo = "*"
+pymongo = "*"
 
 [requires]
 python_version = "3.6"

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     # user's apps
     'sites',
+    'articles',
 ]
 
 MIDDLEWARE = [
@@ -88,8 +89,14 @@ DATABASES = {
         'PASSWORD': 'Qwerty123',
         'HOST': 'localhost',
         'PORT': '',
+    },
+    'articles': {
+        'ENGINE': 'djongo',
+        'NAME': 'GALATEIA',
     }
 }
+
+DATABASE_ROUTERS = ['galateia.routers.MongoRouter']
 
 
 # Password validation
@@ -187,6 +194,7 @@ JET_SIDE_MENU_ITEMS = [
     {'label': 'Сайты', 'items': [
         {'name': 'sites.site'},
         {'name': 'sites.tmpcontent'},
+        {'name': 'articles.mongotest'}
     ]},
     {'label': 'Периодические задачи', 'items': [
         {'name': 'django_celery_beat.periodictask', 'label': 'Запланированые задачи'},
