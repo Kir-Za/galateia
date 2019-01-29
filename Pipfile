@@ -16,6 +16,9 @@ django-celery-results = "*"
 django-celery-beat = "*"
 redis = "*"
 django-jet = "*"
+djangorestframework = "*"
+markdown = "*"
+django-filter = "*"
 
 [requires]
 python_version = "3.6"

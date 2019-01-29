@@ -2,7 +2,7 @@ from billiard.pool import Pool
 
 from django.conf import settings
 
-from sites.models import Site, TmpContent
+from sites.models import Site, Article
 from sites.tass_utils import tass_circle
 
 
@@ -34,18 +34,7 @@ class RenderAndSave():
         """
         for part in results:
             for result in part:
-                if not TmpContent.objects.filter(link=result['news_link']).first():
-                    key_words = Site.objects.filter(target_urls=result['target']).first().get_key_words()
-                    for key in key_words:
-                        if key in result['news_title']:
-                            TmpContent.objects.create(
-                                target_site=result['target'],
-                                link=result['news_link'],
-                                title=result['news_title'],
-                                abstract=result['abstract'],
-                                body=result['main_text']
-                            )
-                            break
+                Article.objects.get_or_create(link=result.pop('news_link'), content=result)
 
     def _async_worker(self, sites_list) -> tuple:
         """
@@ -53,7 +42,6 @@ class RenderAndSave():
         :param sites_list: список сайтов для анализа
         :return: спискок кортежей с резульатами парсинга
         """
-        #self.process_pool = mp.Pool(processes=settings.PROCESS_AMOUNT)
         self.process_pool = Pool(processes=settings.PROCESS_AMOUNT)
         results = [self.process_pool.apply_async(self.AVAILABLE_RENDERS[site.news_portal], args=(site.target_urls,))
                    for site in sites_list]

@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.postgres.fields import JSONField
+from django.contrib.auth.models import User
 
 
 class Site(models.Model):
@@ -32,15 +34,17 @@ class Site(models.Model):
         verbose_name_plural = "Целевые сайты"
 
 
-class TmpContent(models.Model):
+class Article(models.Model):
     """
-    Временное хранилище полученного контента, по мере введения MongoDB удалить.
+    Статьи для анализа
     """
-    target_site = models.URLField(verbose_name='Корневой сайт')
-    link = models.URLField(verbose_name='Адрес')
-    title = models.CharField(max_length=200, verbose_name='Заголовок', default='')
-    abstract = models.TextField(verbose_name="Краткое описание", default='')
-    body = models.TextField(verbose_name="Тело статьи", default='')
+    link = models.URLField(verbose_name='Адрес', unique=True)
+    content = JSONField()
+
+    class Meta:
+        indexes = [models.Index(fields=['link'])]
+        verbose_name = "Статья"
+        verbose_name_plural = "Статьи"
 
     def __str__(self):
-        return "{}".format(self.title)
+        return str(self.link)

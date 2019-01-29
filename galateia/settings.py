@@ -181,12 +181,12 @@ JET_CHANGE_FORM_SIBLING_LINKS = True
 
 JET_SIDE_MENU_ITEMS = [
     {'label': 'Пользователи', 'items': [
-        {'name': 'auth.user'},
-        {'name': 'auth.group'},
+        {'name': 'auth.user', 'label': 'Пользователи'},
+        {'name': 'auth.group', 'label': 'Пользовательские группы'},
     ]},
     {'label': 'Сайты', 'items': [
         {'name': 'sites.site'},
-        {'name': 'sites.tmpcontent'},
+        {'name': 'sites.article'},
     ]},
     {'label': 'Периодические задачи', 'items': [
         {'name': 'django_celery_beat.periodictask', 'label': 'Запланированые задачи'},
