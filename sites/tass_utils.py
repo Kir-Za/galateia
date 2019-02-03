@@ -4,7 +4,6 @@
 import logging
 from requests_html import HTMLSession
 
-from sites.models import Article
 
 logger = logging.getLogger('tmp_develop')
 

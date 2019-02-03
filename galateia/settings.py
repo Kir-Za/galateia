@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from sites.tass_utils import tass_circle
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,9 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_celery_results',
     'django_celery_beat',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
 
     # user's apps
     'sites',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -110,6 +115,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -166,6 +178,7 @@ LOGGING = {
     }
 }
 
+AUTH_USER_MODEL = 'users.User'
 
 # CELERY SETTINGS
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
@@ -181,7 +194,7 @@ JET_CHANGE_FORM_SIBLING_LINKS = True
 
 JET_SIDE_MENU_ITEMS = [
     {'label': 'Пользователи', 'items': [
-        {'name': 'auth.user', 'label': 'Пользователи'},
+        {'name': 'users.user', 'label': 'Пользователи'},
         {'name': 'auth.group', 'label': 'Пользовательские группы'},
     ]},
     {'label': 'Сайты', 'items': [
@@ -194,3 +207,19 @@ JET_SIDE_MENU_ITEMS = [
         {'name': 'django_celery_beat.intervalschedule', 'label': 'Временные интервалы'}
     ]},
 ]
+
+# конфигурирование парсеров по отдельным сайтам
+#todo: вынести в отдельный модуль настроек
+AVAILABLE_RENDERS = {
+        'tass.ru': tass_circle,
+    }
+
+STOP_WORDS = ('из', 'ничто', 'мы', 'вы', 'где', 'я', 'этот', 'тасс', 'после', 'себя', 'самый', 'вроде', 'вдоль', 'мой',
+              'сквозь', 'сколько', 'некто', 'некого', 'через', 'сам', 'оно', 'они', 'над', 'она', 'когда', 'ради',
+              'твой', 'всякий', 'у', 'при', 'кто', 'каждый', 'что', 'что-нибудь', 'ты', 'несколько', 'такой', 'любой',
+              'в', 'по', 'навстречу', 'от', 'со', 'под', 'ничей', 'другой', 'тот', 'он', 'незачем', 'их', 'зачем', 'к',
+              'кто-то', 'каковой', 'ваш', 'вследствие', 'никто', 'перед', 'какой-либо', 'столько', 'откуда', 'сей',
+              'нечто', 'на', 'благодаря', 'чей', 'каков', 'иной', 'весь', 'вопреки', 'нечего', 'какой', 'до', 'с', 'её',
+              'некоторый', 'о', 'без', 'близ', 'согласно', 'кроме', 'около', 'его', 'таков', 'про', 'никакой',
+              'который', 'свой', 'наш', '', 'также', 'это', 'и', 'еще', 'как', 'том', 'так', 'для', 'этого', 'этом',
+              'за', 'этом', 'уже', 'чтобы', 'не', 'только', 'бы', 'которых', 'а', 'изза', )

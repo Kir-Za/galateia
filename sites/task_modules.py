@@ -3,15 +3,13 @@ from billiard.pool import Pool
 from django.conf import settings
 
 from sites.models import Site, Article
-from sites.tass_utils import tass_circle
 
 
 class RenderAndSave():
-    AVAILABLE_RENDERS = {
-        'tass': tass_circle,
-    }
-
     def __init__(self, async_mode=True):
+        """
+        :param async_mode: False - используется для теста
+        """
         self.async_mode = async_mode
 
     @staticmethod
@@ -20,6 +18,7 @@ class RenderAndSave():
         Получение списка доступных сайтов
         :param news_portal: новостной портал, по активным тематическим разделам которого будет выполнен поиск, если
         не задан - поиск ведется по всем активным
+        :param news_dep: новостной раздел портала
         :return: query
         """
         if news_portal:
@@ -34,7 +33,7 @@ class RenderAndSave():
         """
         for part in results:
             for result in part:
-                Article.objects.get_or_create(link=result.pop('news_link'), content=result)
+                Article.objects.get_or_create(link=result['news_link'], content=result)
 
     def _async_worker(self, sites_list) -> tuple:
         """
@@ -43,7 +42,7 @@ class RenderAndSave():
         :return: спискок кортежей с резульатами парсинга
         """
         self.process_pool = Pool(processes=settings.PROCESS_AMOUNT)
-        results = [self.process_pool.apply_async(self.AVAILABLE_RENDERS[site.news_portal], args=(site.target_urls,))
+        results = [self.process_pool.apply_async(settings.AVAILABLE_RENDERS[site.news_portal], args=(site.target_url,))
                    for site in sites_list]
         clean_data = [i.get() for i in results]
         self.process_pool.close()
@@ -56,8 +55,7 @@ class RenderAndSave():
         :param sites_list: сайт для анализа
         :return: спискок кортежей с резульатами парсинга
         """
-        site = site[0]
-        return [self.AVAILABLE_RENDERS[site.news_portal].__call__(site.target_urls)]
+        return [settings.AVAILABLE_RENDERS[site.news_portal].__call__(site.target_url)]
 
     def run_parser(self) -> str:
         """
@@ -68,6 +66,6 @@ class RenderAndSave():
             sites_list = self.get_available_sites()
             data_from_site = self._async_worker(sites_list)
         else:
-            single_site = self.get_available_sites(news_portal='tass', news_dep='ekonomika').pop()
+            single_site = self.get_available_sites().pop()
             data_from_site = self._sync_worker(single_site)
         self._save_postgr(data_from_site)

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a4f35a23dd5f2f964c24f3dc30c14928d4cf8183ec9d70517826b387d6d68f4c"
+            "sha256": "f1acb7e7b5d9762223adf09173c839ff2d4d27e972328b06f63a12c2ee6cfe96"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -75,6 +75,13 @@
             ],
             "version": "==3.0.4"
         },
+        "clean": {
+            "hashes": [
+                "sha256:55bc1645c9ee7702be784ccb121a6951cbaa1f02c9d0b6d2082dba34c3107719"
+            ],
+            "index": "pypi",
+            "version": "==0.1.4"
+        },
         "cssselect": {
             "hashes": [
                 "sha256:066d8bc5229af09617e24b3ca4d52f1f9092d9e061931f4184cd572885c23204",
@@ -120,6 +127,13 @@
             ],
             "index": "pypi",
             "version": "==1.0.8"
+        },
+        "django-rest-auth": {
+            "hashes": [
+                "sha256:ad155a0ed1061b32e3e46c9b25686e397644fd6acfd35d5c03bc6b9d2fc6c82a"
+            ],
+            "index": "pypi",
+            "version": "==0.9.3"
         },
         "django-timezone-field": {
             "hashes": [

@@ -19,6 +19,8 @@ django-jet = "*"
 djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
+django-rest-auth = "*"
+clean = "*"
 
 [requires]
 python_version = "3.6"
