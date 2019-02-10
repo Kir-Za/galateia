@@ -1,9 +1,8 @@
-from django.shortcuts import get_object_or_404
 import django_filters.rest_framework
+from rest_framework_extensions.mixins import DetailSerializerMixin
 
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 
 from sites.models import Site, Article
 from sites.rest.v1.serializers import SimpleSiteSerializer, SimpleArticleSerializer, DetailArtileSerializer
@@ -22,34 +21,15 @@ class SitesListViewSet(ReadOnlyModelViewSet):
         return Site.objects.all()
 
 
-class ArticlesViewSet(ReadOnlyModelViewSet):
+class ArticlesViewSet(DetailSerializerMixin, ReadOnlyModelViewSet):
     """
-    Существующие статьи
+    Существующие статьи.
     """
     permission_classes = (IsAuthenticated,)
+    serializer_class = SimpleArticleSerializer
+    serializer_detail_class = DetailArtileSerializer
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
+    filter_fields = ('has_prices', 'has_percents', )
 
-
-    def list(self, request, *args, **kwargs):
-        """
-        Саисок доступных статей
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        queryset = Article.objects.all()
-        serializer = SimpleArticleSerializer(queryset, many=True)
-
-        return Response(serializer.data)
-
-    def retrieve(self, request, pk=None):
-        """
-        Детальная информация по конкретной статье
-        :param request:
-        :param pk:
-        :return:
-        """
-        queryset = Article.objects.all()
-        article = get_object_or_404(queryset, pk=pk)
-        serializer = DetailArtileSerializer(article)
-        return Response(serializer.data)
+    def get_queryset(self):
+        return Article.objects.all()

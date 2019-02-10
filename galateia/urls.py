@@ -15,10 +15,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Galateia API",
+      default_version='v1',
+      description="API for bot",
+   ),
+   public=True,
+)
+
 
 urlpatterns = [
     path('api/v1/', include('api.v1.urls')),
     path('jet/', include('jet.urls', 'jet')),  # Django JET URLS
     path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     path('admin/', admin.site.urls),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger'),
 ]

@@ -1,8 +1,6 @@
-import string
-
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-from django.conf import settings
+
 
 
 class Site(models.Model):
@@ -39,6 +37,9 @@ class Article(models.Model):
     Статьи для анализа
     """
     link = models.URLField(verbose_name='Адрес', unique=True)
+    has_percents = models.BooleanField(default=False, verbose_name='Проценты в статье.')
+    has_prices = models.BooleanField(default=False, verbose_name='Цены.')
+    frequent_words = models.CharField(max_length=500, default='', verbose_name='Наиболее частыне слова.')
     content = JSONField()
 
     class Meta:
@@ -48,36 +49,3 @@ class Article(models.Model):
 
     def __str__(self):
         return str(self.link)
-
-    @property
-    def has_prices(self) -> bool:
-        """
-        Есть ли цены в статье
-        :return: True/False
-        """
-        return ('$' in self.content['main_text']) or ('€' in self.content['main_text'])
-
-    @property
-    def has_percents(self) -> bool:
-        """
-        Есть ли проценты в татье
-        :return: True/False
-        """
-        return ('%' in self.content['main_text']) or ('процент' in self.content['main_text'])
-
-    def get_frequent_words(self, number=10):
-        """
-        Получение наиболее частых слов в тексте статьи
-        :param number: сколько наиболее частых слов вернуть
-        :return: список слов
-        """
-        main_text = self.content['main_text'].lower()
-        shift_symbols = string.punctuation + string.digits + '\n' + '\t' + '\r' + '€'
-        shift_table = {ord(symbol): None for symbol in shift_symbols}
-        clear_text = main_text.translate(shift_table)
-        text_list = clear_text.split(' ')
-        frequent_words = [(text_list.count(key), key)for key in set(text_list) if key not in settings.STOP_WORDS]
-        frequent_words.sort()
-        if len(frequent_words) >= abs(number):
-            return frequent_words[-abs(number):]
-        return None

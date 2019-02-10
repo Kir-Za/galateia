@@ -4,6 +4,9 @@ from sites.models import Site, Article
 
 
 class SimpleSiteSerializer(serializers.ModelSerializer):
+    """
+    Новостной источник.
+    """
     class Meta:
         model = Site
         fields = ('pk', 'target_url', 'is_active')
@@ -11,23 +14,22 @@ class SimpleSiteSerializer(serializers.ModelSerializer):
 
 
 class SimpleArticleSerializer(serializers.ModelSerializer):
-    has_prices = serializers.BooleanField()
-    has_percents = serializers.BooleanField()
+    """
+    Список статей.
+    """
     title = serializers.CharField(source='content.news_title')
-    frequent_words = serializers.SerializerMethodField()
 
     class Meta:
         model = Article
-        fields = ('pk','link', 'title', 'has_prices', 'has_percents', 'frequent_words')
+        fields = ('pk', 'link', 'title', 'has_prices', 'has_percents', 'frequent_words')
         read_only_fields = ('pk', 'link', 'title', 'has_prices', 'has_percents', 'frequent_words')
-
-    def get_frequent_words(self, obj):
-        base_tuples = obj.get_frequent_words(number=5)
-        return [i[1] for i in base_tuples]
 
 
 class DetailArtileSerializer(serializers.ModelSerializer):
+    """
+    Детальная информация по каждой статье, content может разниться в зависимости от сайта.
+    """
     class Meta:
         model = Article
-        fields = ('content', )
-        read_only_fields = ('content', )
+        fields = ('content', 'has_prices', 'has_percents', 'frequent_words')
+        read_only_fields = ('content', 'has_prices', 'has_percents', 'frequent_words')

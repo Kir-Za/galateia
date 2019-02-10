@@ -21,6 +21,9 @@ markdown = "*"
 django-filter = "*"
 django-rest-auth = "*"
 clean = "*"
+django-rest-swagger = "*"
+drf-yasg = "*"
+drf-extensions = "*"
 
 [requires]
 python_version = "3.6"

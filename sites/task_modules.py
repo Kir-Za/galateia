@@ -3,6 +3,7 @@ from billiard.pool import Pool
 from django.conf import settings
 
 from sites.models import Site, Article
+from sites.utils import get_frequent_words, get_has_percents, get_has_prices
 
 
 class RenderAndSave():
@@ -33,7 +34,13 @@ class RenderAndSave():
         """
         for part in results:
             for result in part:
-                Article.objects.get_or_create(link=result['news_link'], content=result)
+                Article.objects.get_or_create(
+                    link=result['news_link'],
+                    has_prices=get_has_prices(result['main_text']),
+                    has_percents=get_has_percents(result['main_text']),
+                    frequent_words=get_frequent_words(result['main_text']),
+                    content=result
+                )
 
     def _async_worker(self, sites_list) -> tuple:
         """
@@ -66,6 +73,7 @@ class RenderAndSave():
             sites_list = self.get_available_sites()
             data_from_site = self._async_worker(sites_list)
         else:
-            single_site = self.get_available_sites().pop()
-            data_from_site = self._sync_worker(single_site)
+            sites_list = self.get_available_sites().pop()
+            data_from_site = self._sync_worker(sites_list)
         self._save_postgr(data_from_site)
+        return [i.target_url for i in sites_list]
