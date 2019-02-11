@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'rest_auth',
     'rest_framework_swagger',
     'drf_yasg',
+    'django_filters',
+    'debug_toolbar',
 
     # user's apps
     'sites',
@@ -55,6 +57,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,15 +71,22 @@ ROOT_URLCONF = 'galateia.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
-            ],
+
+            ]
         },
     },
 ]
@@ -210,11 +220,50 @@ JET_SIDE_MENU_ITEMS = [
     ]},
 ]
 
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+    'debug_toolbar.panels.signals.SignalsPanel',
+    'debug_toolbar.panels.logging.LoggingPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+]
+
+DEBUG_TOOLBAR_CONFIG = {
+       'INTERCEPT_REDIRECTS': False,
+}
+
+INTERNAL_IPS = ('127.0.0.1', )
+
+#todo перенести в settings_prod
+#CACHES = {
+#    "default": {
+#        "BACKEND": "django_redis.cache.RedisCache",
+#        "LOCATION": "redis://127.0.0.1:6379/1",
+#        "OPTIONS": {
+#            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+#        },
+#        "KEY_PREFIX": "gpr",
+#    }
+#}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
 # конфигурирование парсеров по отдельным сайтам
 #todo: вынести в отдельный модуль настроек
 AVAILABLE_RENDERS = {
         'tass.ru': tass_circle,
-    }
+}
 
 STOP_WORDS = ('из', 'ничто', 'мы', 'вы', 'где', 'я', 'этот', 'тасс', 'после', 'себя', 'самый', 'вроде', 'вдоль', 'мой',
               'сквозь', 'сколько', 'некто', 'некого', 'через', 'сам', 'оно', 'они', 'над', 'она', 'когда', 'ради',
