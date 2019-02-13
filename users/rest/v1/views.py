@@ -1,43 +1,26 @@
 from django.shortcuts import get_object_or_404
+import django_filters.rest_framework
 
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_extensions.mixins import DetailSerializerMixin
 
-from users.models import User, UserSite
+from users.models import User, UserSite, UserArticle
 from users.rest.v1.serializers import SimpleUserSerializer, DetailUserSerializer, SimpleUserSiteSerializer, \
-    DetailUserSiteSerializer
+    DetailUserSiteSerializer, UserArticleSerializer
 
 
-class UsersViewSet(ReadOnlyModelViewSet):
+class UsersViewSet(DetailSerializerMixin, ReadOnlyModelViewSet):
     """
     Пользователи системы
     """
     permission_classes = (IsAuthenticated,)
+    serializer_class = SimpleUserSerializer
+    serializer_detail_class = DetailUserSerializer
 
-    def list(self, request, *args, **kwargs):
-        """
-        Список пользователей, включая не активных
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        queryset = User.objects.all()
-        serializer = SimpleUserSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def retrieve(self, request, pk=None):
-        """
-        Детальная информация по каждому пользователю
-        :param request:
-        :param pk:
-        :return:
-        """
-        queryset = User.objects.all()
-        user = get_object_or_404(queryset, pk=pk)
-        serializer = DetailUserSerializer(user)
-        return Response(serializer.data)
+    def get_queryset(self):
+        return User.objects.exclude(is_superuser=True)
 
 
 class UserSitesViewSet(ReadOnlyModelViewSet):
@@ -45,6 +28,7 @@ class UserSitesViewSet(ReadOnlyModelViewSet):
     Предпочитаемые пользователем инфо ресурсы
     """
     permission_classes = (IsAuthenticated,)
+    serializer_class = SimpleUserSiteSerializer
 
     def list(self, request, pk=None):
         """
@@ -65,6 +49,16 @@ class UserSitesViewSet(ReadOnlyModelViewSet):
         :param site_id:
         :return:
         """
-        queryset = UserSite.objects.filter(site__pk=site_id).filter(user__pk=pk).last()
+        queryset = UserSite.objects.filter(pk=site_id).filter(user__pk=pk).last()
         serializer = DetailUserSiteSerializer(queryset, many=False)
         return Response(serializer.data)
+
+
+class UserEstimationsViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserArticleSerializer
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, )
+    filter_fields = ('user', 'user_estimation', 'article')
+
+    def get_queryset(self):
+        return UserArticle.objects.all()

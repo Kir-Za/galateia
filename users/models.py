@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from sites.models import Site
+from sites.models import Site, Article
 
 
 class UserSite(models.Model):
@@ -17,6 +17,9 @@ class UserSite(models.Model):
         blank=True,
         default=''
     )
+
+    class Meta:
+        unique_together = ("site", "user")
 
     @property
     def get_key_words(self) -> list:
@@ -35,6 +38,43 @@ class UserSite(models.Model):
         return self.exclude_words.split(', ')
 
 
+class UserArticle(models.Model):
+    """
+    Оценка статьи
+    """
+    SOMEHOW = 'sh'
+    VERY_BAD = 'vb'
+    BAD = 'bd'
+    HARDLY = 'hd'
+    AVERAGE = 'av'
+    WELL = 'wl'
+    GOOD = 'gd'
+    VERY_GOOD = 'vg'
+
+    USER_ESTIMATION = (
+        (SOMEHOW, 'Без оценки'),
+        (VERY_BAD, 'Раздражающая статья'),
+        (BAD, 'Совсем неинтересно'),
+        (HARDLY, 'Неинтересно'),
+        (AVERAGE, 'Средне'),
+        (WELL, 'Можно почитать'),
+        (GOOD, 'Хорошая статья'),
+        (VERY_GOOD, 'Очень интересно')
+    )
+    
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, verbose_name='Статья.')
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE, verbose_name='Пользователь')
+    user_estimation = models.CharField(
+        choices=USER_ESTIMATION,
+        max_length=2,
+        default=SOMEHOW,
+        verbose_name='Пользовательская оценка'
+    )
+
+    class Meta:
+        unique_together = ("article", "user")
+
+
 class User(AbstractUser):
     """
     Пользователь системы.
@@ -49,6 +89,7 @@ class User(AbstractUser):
 
     user_type = models.CharField(max_length=2, choices=USER_CHOICE_FIELD, default=USER, verbose_name='Тип пользователя')
     sites = models.ManyToManyField(Site, verbose_name='Пользовательские сайты', through=UserSite)
+    articles = models.ManyToManyField(Article, verbose_name='Пользовательские сайты', through=UserArticle)
 
     class Meta:
         ordering = ['username', '-date_joined']

@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
 
-from users.models import UserSite
+from users.models import UserSite, UserArticle
 
 User = get_user_model()
 
@@ -36,3 +36,9 @@ class DetailUserSiteSerializer(serializers.ModelSerializer):
         model = UserSite
         fields = ('pk', 'site', 'key_words', 'exclude_words')
         read_only_fields = ('pk', 'site', 'key_words', 'exclude_words')
+
+
+class UserArticleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserArticle
+        fields = ('id', 'user', 'article', 'user_estimation')

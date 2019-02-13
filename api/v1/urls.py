@@ -5,7 +5,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
     path('', include('sites.urls')),
-    path('users/', include('users.urls')),
+    path('', include('users.urls')),
     path('auth/', include('rest_auth.urls')),
 ]
 
