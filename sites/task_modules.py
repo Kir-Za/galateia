@@ -1,9 +1,12 @@
+import logging
 from billiard.pool import Pool
 
 from django.conf import settings
 
 from sites.models import Site, Article
 from sites.utils import get_frequent_words, get_has_percents, get_has_prices
+
+logger = logging.getLogger('tmp_develop')
 
 
 class RenderAndSave():
@@ -26,7 +29,8 @@ class RenderAndSave():
             return [Site.objects.filter(is_active=True, news_portal=news_portal, news_department=news_dep)]
         return [site for site in Site.objects.filter(is_active=True)]
 
-    def _save_postgr(self, results):
+    @staticmethod
+    def _save_postgr(results):
         """
         Сохранение в Postgresql результатов парсинга
         :param results: список с корежами, содержащими словарь, описывающий результат парсинга отдельной статьи
@@ -64,7 +68,7 @@ class RenderAndSave():
         """
         return [settings.AVAILABLE_RENDERS[site.news_portal].__call__(site.target_url)]
 
-    def run_parser(self) -> str:
+    def run_parser(self) -> list:
         """
         Запуск парсера.
         :return:
@@ -75,5 +79,8 @@ class RenderAndSave():
         else:
             sites_list = self.get_available_sites().pop()
             data_from_site = self._sync_worker(sites_list)
+        if not data_from_site:
+            logger.info("Ошибка рабзора сайта")
+            raise Exception("Ошибка рабзора сайта")
         self._save_postgr(data_from_site)
         return [i.target_url for i in sites_list]
