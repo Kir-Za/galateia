@@ -1,16 +1,5 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 
-from users.models import User, UserSite
+from users.models import User
 
-
-class UserSiteInline(admin.TabularInline):
-    model = UserSite
-    fields = ('site', ('key_words', 'exclude_words'))
-
-
-@admin.register(User)
-class UserAdmin(UserAdmin):
-    inlines = [
-        UserSiteInline
-    ]
+admin.site.register(User)

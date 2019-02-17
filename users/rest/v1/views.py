@@ -6,7 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import DetailSerializerMixin
 
-from users.models import User, UserSite, UserArticle
+from users.models import User
+from sites.models import UserSite, UserArticle
 from users.rest.v1.serializers import SimpleUserSerializer, DetailUserSerializer, SimpleUserSiteSerializer, \
     DetailUserSiteSerializer, UserArticleSerializer
 

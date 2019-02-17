@@ -66,18 +66,21 @@ class RenderAndSave():
         :param sites_list: сайт для анализа
         :return: спискок кортежей с резульатами парсинга
         """
-        return [settings.AVAILABLE_RENDERS[site.news_portal].__call__(site.target_url)]
+        try:
+            site = site[0]
+            return [settings.AVAILABLE_RENDERS[site.news_portal].__call__(site.target_url)]
+        except Exception as err:
+            logger.error(err)
 
     def run_parser(self) -> list:
         """
         Запуск парсера.
         :return:
         """
+        sites_list = self.get_available_sites()
         if self.async_mode:
-            sites_list = self.get_available_sites()
             data_from_site = self._async_worker(sites_list)
         else:
-            sites_list = self.get_available_sites().pop()
             data_from_site = self._sync_worker(sites_list)
         if not data_from_site:
             logger.info("Ошибка рабзора сайта")

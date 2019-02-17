@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
 
-from users.models import UserSite, UserArticle
+from sites.models import UserSite, UserArticle
 
 User = get_user_model()
 

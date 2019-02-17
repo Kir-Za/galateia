@@ -212,6 +212,7 @@ JET_SIDE_MENU_ITEMS = [
     {'label': 'Сайты', 'items': [
         {'name': 'sites.site'},
         {'name': 'sites.article'},
+        {'name': 'sites.usersite'},
     ]},
     {'label': 'Периодические задачи', 'items': [
         {'name': 'django_celery_beat.periodictask', 'label': 'Запланированые задачи'},

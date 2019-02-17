@@ -1,6 +1,5 @@
 from django.contrib import admin
-from sites.models import Site, Article
-from users.models import UserArticle
+from sites.models import Site, Article, UserArticle, UserSite
 
 
 @admin.register(Site)
@@ -37,3 +36,17 @@ class ArticleAdmin(admin.ModelAdmin):
 
     news_title.short_description = "Заголовок"
     main_text.short_description = "Основной текст"
+
+
+@admin.register(UserSite)
+class UserSiteInline(admin.ModelAdmin):
+    fields = ('site', ('key_words', 'exclude_words'))
+
+    def get_queryset(self, request):
+        query = super().get_queryset(request)
+        return query.filter(user=request.user) if query else query
+
+    def save_model(self, request, obj, form, change):
+        obj.user = request.user
+        obj.user_id = request.user.pk
+        super().save_model(request, obj, form, change)
