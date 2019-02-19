@@ -14,7 +14,7 @@ class UserArticleAdmin(admin.StackedInline):
 
     def get_field_queryset(self, db, db_field, request):
         query = super().get_field_queryset(db, db_field, request)
-        if db_field.name == 'user':
+        if db_field.name == 'user' and not request.user.is_superuser:
             query = query.filter(pk=request.user.pk)
         return query
 
@@ -39,12 +39,15 @@ class ArticleAdmin(admin.ModelAdmin):
 
 
 @admin.register(UserSite)
-class UserSiteInline(admin.ModelAdmin):
+class UserSiteAdmin(admin.ModelAdmin):
+    list_display = ('site', 'user')
     fields = ('site', ('key_words', 'exclude_words'))
 
     def get_queryset(self, request):
         query = super().get_queryset(request)
-        return query.filter(user=request.user) if query else query
+        if not request.user.is_superuser:
+            return query.filter(user=request.user) if query else query
+        return query
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user

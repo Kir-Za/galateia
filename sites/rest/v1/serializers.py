@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from sites.models import Site, Article
+from sites.models import Site, Article, UserArticle, UserSite
 
 
 class SimpleSiteSerializer(serializers.ModelSerializer):
@@ -33,3 +33,26 @@ class DetailArtileSerializer(serializers.ModelSerializer):
         model = Article
         fields = ('content', 'has_prices', 'has_percents', 'frequent_words')
         read_only_fields = ('content', 'has_prices', 'has_percents', 'frequent_words')
+
+
+class UserArticleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserArticle
+        fields = ('id', 'user', 'article', 'user_estimation')
+
+
+class SimpleUserSiteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserSite
+        fields = ('pk', 'site',)
+        read_only_fields = ('pk', 'site',)
+
+
+class DetailUserSiteSerializer(serializers.ModelSerializer):
+    key_words = serializers.ListField(source='get_key_words')
+    exclude_words = serializers.ListField(source='get_exclude_words')
+
+    class Meta:
+        model = UserSite
+        fields = ('pk', 'site', 'key_words', 'exclude_words')
+        read_only_fields = ('pk', 'site', 'key_words', 'exclude_words')
