@@ -13,7 +13,8 @@ urlpatterns = [
     path('articles/', cache_page(60*10)(ArticlesViewSet.as_view({'get': 'list'})), name='list_articles'),
     path('articles/<int:pk>/', ArticlesViewSet.as_view({'get': 'retrieve'}), name='detail_article'),
     path('users/<int:pk>/sites/', UserSitesViewSet.as_view({'get': 'list'}), name='list_prefer'),
-    path('users/<int:pk>/sites/<int:site_id>/', UserSitesViewSet.as_view({'get': 'retrieve'}), name='detail_prefer'),
+    path('users/<int:pk>/sites/<int:interface_id>/', UserSitesViewSet.as_view({'get': 'retrieve'}),
+         name='detail_prefer'),
 ]
 
 urlpatterns += router.urls

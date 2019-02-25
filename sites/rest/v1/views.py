@@ -65,14 +65,14 @@ class UserSitesViewSet(ReadOnlyModelViewSet):
         serializer = SimpleUserSiteSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def retrieve(self, request, pk=None, site_id=None):
+    def retrieve(self, request, pk=None, interface_id=None):
         """
         Детальная информация, включая ключевые запросы пользователя
         :param request:
         :param pk:
-        :param site_id:
+        :param interface_id:
         :return:
         """
-        queryset = UserSite.objects.filter(pk=site_id).filter(user__pk=pk).last()
+        queryset = UserSite.objects.filter(pk=interface_id).filter(user__pk=pk).last()
         serializer = DetailUserSiteSerializer(queryset, many=False)
         return Response(serializer.data)
